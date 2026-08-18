@@ -448,7 +448,7 @@ function ensureV16Ui(){
  const debrief=document.createElement('div'); debrief.id='debriefOverlay'; debrief.className='execution-overlay';
  debrief.innerHTML='<div id="debriefContent" class="execution-content"></div>'; document.body.appendChild(debrief);
  const bottom=document.createElement('nav'); bottom.className='mobile-bottom-nav';
- bottom.innerHTML=`<button onclick="closeExecution();go('cockpit')">⌂<span>Aujourd’hui</span></button><button onclick="closeExecution();go('plan')">▦<span>Plan</span></button><button onclick="closeExecution();go('library')">▶<span>Séances</span></button><button onclick="closeExecution();go('progress')">↗<span>Progrès</span></button><button onclick="closeExecution();go('sync')">☁<span>Sync</span></button>`;
+ bottom.innerHTML=`<button onclick="closeExecution();go('cockpit')">⌂<span>Aujourd’hui</span></button><button onclick="closeExecution();go('plan')">▦<span>Plan</span></button><button onclick="closeExecution();go('library')">▶<span>Séances</span></button><button onclick="closeExecution();go('progress')">↗<span>Progrès</span></button>`;
  document.body.appendChild(bottom);
  const today=document.createElement('button'); today.className='floating-today'; today.textContent='⌂ Aujourd’hui'; today.onclick=()=>{closeExecution();go('cockpit')}; document.body.appendChild(today);
 }
