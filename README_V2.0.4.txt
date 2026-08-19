@@ -8,3 +8,5 @@ Correctifs :
 - viewport-fit=cover ajouté pour iPhone.
 
 Conserve toutes les données dans apex_v1_data et la synchro Supabase existante.
+
+Correctif affichage version : suppression de l'écrasement V2.0.3 par le module Saison.

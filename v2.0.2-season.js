@@ -1,4 +1,4 @@
-/* APEX V2.0.3 — Saison robuste, chargé après app.js */
+/* APEX — module Saison robuste, chargé après app.js */
 (function(){
   'use strict';
   const V202_SEASON_START='2026-08-30';
@@ -81,9 +81,8 @@
 
   function v202Render(){
     v202Inject();
-    try{ if(typeof renderLibrary==='function') renderLibrary(); }catch(e){console.error('V2.0.3 renderLibrary',e);}
-    try{ if(typeof renderPlan==='function') renderPlan(); }catch(e){console.error('V2.0.3 renderPlan',e);}
-    const version=document.querySelector('.version'); if(version) version.textContent='V2.0.3';
+    try{ if(typeof renderLibrary==='function') renderLibrary(); }catch(e){console.error('APEX season renderLibrary',e);}
+    try{ if(typeof renderPlan==='function') renderPlan(); }catch(e){console.error('APEX season renderPlan',e);}
   }
 
   // Après chaque réception cloud, réinjecter immédiatement Saison + bibliothèque V2.

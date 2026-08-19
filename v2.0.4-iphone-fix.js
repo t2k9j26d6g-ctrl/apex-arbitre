@@ -81,3 +81,14 @@
   localStorage.setItem(KEY,JSON.stringify(state));
   if(typeof refreshAll==='function')refreshAll();
 })();
+
+// Version UI guard: one source of truth for this release.
+(function(){
+  const applyVersion=()=>{
+    const v=document.body?.dataset?.apexVersion || 'V2.0.4';
+    document.querySelectorAll('.version').forEach(el=>el.textContent=v);
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', applyVersion, {once:true});
+  else applyVersion();
+  setTimeout(applyVersion,0);
+})();
