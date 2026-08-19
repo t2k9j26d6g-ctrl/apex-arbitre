@@ -28,3 +28,10 @@ La Publishable key Supabase est une clé client. Les données sont protégées p
 
 ## Publication web
 Ce dossier est statique et peut être publié tel quel sur GitHub Pages. Pour une publication publique, ne jamais ajouter de fichier d'export APEX JSON au dépôt.
+
+## V2.0 - Saison rugby
+- Le plan continue après le test Yo-Yo du 29/08/2026.
+- Nouvelles briques saison : S1 endurance aérobie, S2 intermittent entretien arbitre.
+- Barre Pilates recentrée sur le matériel réel : B1 corps entier, B2 stabilité hanche/genou, B3 haut du corps + tronc, B4 activation courte.
+- Les visuels Pilates proviennent du guide fourni avec la barre et sont utilisés comme repères d'exécution.
+- Migration non destructive : les données existantes et la synchronisation Supabase sont conservées.

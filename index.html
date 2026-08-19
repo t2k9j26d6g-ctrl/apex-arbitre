@@ -2,26 +2,26 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>APEX Arbitre V1.9.2</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>APEX Arbitre V2.0.4 Saison</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <header class="topbar">
   <div><div class="brand">APEX <span>ARBITRE</span></div><div class="subtitle">Adaptation • Préparation • État • eXécution</div></div>
-  <div class="top-right"><span id="testCountdown" class="countdown">Test J-12</span><span id="cloudTopStatus" class="cloud-top-status local">LOCAL</span><span class="version">V1.9.2</span></div>
+  <div class="top-right"><span id="testCountdown" class="countdown">Test J-12</span><span id="cloudTopStatus" class="cloud-top-status local">LOCAL</span><span class="version">V2.0.4</span></div>
 </header>
 <div class="layout">
   <aside class="sidebar">
     <button class="nav active" data-view="cockpit">✦ Cockpit du jour</button>
     <button class="nav" data-view="checkin">♥ Check-in matin</button>
-    <button class="nav" data-view="plan">▦ Plan jusqu'au test</button>
+    <button class="nav" data-view="plan">▦ Plan & saison</button>
     <button class="nav" data-view="library">▶ Bibliothèque séances</button>
     <button class="nav" data-view="progress">↗ Progression</button>
     <button class="nav" data-view="mental">◎ Mental / TOP</button>
     <button class="nav" data-view="history">↺ Historique</button>
     <button class="nav" data-view="sync">☁ Synchronisation</button>
-    <div class="aside-note">V1.9.2 : synchronisation multi-appareils + navigation mobile corrigée.</div>
+    <div class="aside-note">V2.0 Saison : préparation au test + maintien physique pour la saison rugby.</div>
   </aside>
 
   <main class="content">
@@ -33,7 +33,7 @@
       <div id="cockpitDecision"></div>
       <div class="dashboard-grid">
         <div class="panel"><div class="panel-head"><h2>État du matin</h2><span id="readinessBadge" class="badge neutral">À renseigner</span></div><div id="morningSnapshot" class="metric-grid"></div></div>
-        <div class="panel"><div class="panel-head"><h2>Cap vers le test</h2><span class="badge">29/08</span></div><div id="goalSnapshot"></div></div>
+        <div class="panel"><div class="panel-head"><h2>Cap APEX</h2><span class="badge">TEST + SAISON</span></div><div id="goalSnapshot"></div></div>
       </div>
       <div class="panel prep-panel"><div class="panel-head"><div><h2>Indice APEX de préparation</h2><p class="muted mini">Un repère interne et transparent : spécifique 40 % · disponibilité physique 25 % · fraîcheur 20 % · mental 15 %.</p></div><span id="prepBadge" class="badge neutral">En construction</span></div><div id="prepIndex"></div></div>
       <div class="panel"><div class="panel-head"><h2>Les 4 piliers APEX</h2><span class="muted">un seul cockpit, quatre leviers</span></div><div class="pillar-grid"><article>🏃<b>Cardio</b><span>Fractionné, Yo-Yo, endurance utile</span></article><article>🏋️<b>Renforcement</b><span>Chaîne postérieure, stabilité, gainage</span></article><article>🧘<b>Mobilité / récupération</b><span>Préserver la fraîcheur et la mobilité</span></article><article>🧠<b>Mental / TOP</b><span>Confiance, activation, projection, routines</span></article></div></div>
@@ -59,7 +59,7 @@
     </section>
 
     <section id="plan" class="view">
-      <div class="section-head"><div><span class="eyebrow">OBJECTIF 29 AOÛT 2026</span><h1>Plan jusqu'au test</h1><p>Le plan donne le cap. Le cockpit peut alléger une séance selon l'état du matin, mais ne déplace pas automatiquement une séance clé sans te l'indiquer.</p></div><button class="ghost" onclick="resetPlan()">Réinitialiser le plan V1.6</button></div>
+      <div class="section-head"><div><span class="eyebrow">OBJECTIF : TEST + SAISON RUGBY</span><h1>Plan APEX</h1><p>Jusqu’au 29/08, priorité au test Yo-Yo. Après le test, APEX bascule en maintien saison : cardio, barre Pilates, mobilité et récupération.</p></div><button class="ghost" onclick="resetPlan()">Réinitialiser le plan V2.0</button></div>
       <div id="planTimeline" class="timeline"></div>
     </section>
 
@@ -70,7 +70,7 @@
 
     <section id="progress" class="view">
       <div class="section-head"><div><span class="eyebrow">TENDANCES</span><h1>Progression</h1></div></div>
-      <div class="cards stats"><article><span id="statCheckins">0</span><small>check-ins</small></article><article><span id="statTraining">0</span><small>séances réalisées</small></article><article><span id="statMental">0</span><small>séances mental/TOP</small></article><article><span id="statDays">12</span><small>jours avant test</small></article></div>
+      <div class="cards stats"><article><span id="statCheckins">0</span><small>check-ins</small></article><article><span id="statTraining">0</span><small>séances réalisées</small></article><article><span id="statMental">0</span><small>séances mental/TOP</small></article><article><span id="statDays">12</span><small id="statDaysLabel">jours avant test</small></article></div>
       <div class="dashboard-grid"><div class="panel"><h2>Sommeil</h2><div id="sleepTrend"></div></div><div class="panel"><h2>Genou</h2><div id="kneeTrend"></div></div></div>
       <div class="panel"><div class="panel-head"><h2>Ce qu’APEX apprend de toi</h2><span class="badge">V1.6</span></div><div id="adaptiveInsights"></div></div>
       <div class="panel"><h2>Journal d'entraînement</h2><div id="trainingLog"></div></div>
@@ -153,5 +153,8 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="app.js"></script>
+<script src="v2.0.2-season.js"></script>
+  <script src="v2.0.3-mobility-sync.js"></script>
+  <script src="v2.0.4-iphone-fix.js"></script>
 </body>
 </html>

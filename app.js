@@ -1414,3 +1414,154 @@ updateCloudUi=function(){v191UpdateCloudUi();renderV191ActionFeedback();};
 state.settings.apexVersion='1.9.1-feedback';
 v191Persist();
 setTimeout(renderV191ActionFeedback,250);
+
+/* =========================================================
+   APEX V2.0 — SAISON RUGBY + PILATES BAR
+   - Le test du 29/08 reste un jalon.
+   - Le plan continue après le test en mode maintien saison.
+   - B1/B2/B3/B4 utilisent réellement la barre Pilates et les bandes.
+   - Migration non destructive : aucune donnée antérieure au 30/08 n'est écrasée.
+   ========================================================= */
+const APEX_V2_VERSION='2.0-season';
+const SEASON_START='2026-08-30';
+const SEASON_PLAN=[
+ {date:'2026-08-30',code:'A5',note:'J+1 test : récupération active, marche facile et mobilité. Aucun travail intense.'},
+ {date:'2026-08-31',code:'C1',note:'Mobilité générale + bilan des sensations après le test.'},
+ {date:'2026-09-01',code:'B4',note:'Reprise douce avec barre Pilates : activation corps entier, faible fatigue résiduelle.'},
+ {date:'2026-09-02',code:'S1',note:'Entretien aérobie : séance facile à modérée, sans recherche de performance.'},
+ {date:'2026-09-03',code:'C2',note:'Mobilité courte / récupération.'},
+ {date:'2026-09-04',code:'B2',note:'Barre Pilates : stabilité hanche-genou + chaîne postérieure.'},
+ {date:'2026-09-05',code:'A5',note:'Récupération active. Si arbitrage le week-end, cette séance devient optionnelle.'},
+ {date:'2026-09-07',code:'B1',note:'Barre Pilates corps entier.'},
+ {date:'2026-09-09',code:'S2',note:'Intermittent entretien arbitre sur tapis. Volume inférieur à A3.'},
+ {date:'2026-09-10',code:'C1',note:'Mobilité et récupération.'},
+ {date:'2026-09-11',code:'B3',note:'Barre Pilates haut du corps + tronc.'},
+ {date:'2026-09-13',code:'A5',note:'Récupération active, à adapter à la charge réelle du week-end.'},
+ {date:'2026-09-14',code:'B2',note:'Stabilité + chaîne postérieure avec barre et bandes.'},
+ {date:'2026-09-16',code:'S1',note:'Entretien aérobie continu.'},
+ {date:'2026-09-18',code:'B1',note:'Barre Pilates corps entier.'},
+ {date:'2026-09-20',code:'C2',note:'Récupération courte / mobilité.'},
+ {date:'2026-09-21',code:'B3',note:'Haut du corps + tronc avec barre Pilates.'},
+ {date:'2026-09-23',code:'S2',note:'Intermittent entretien arbitre.'},
+ {date:'2026-09-25',code:'B4',note:'Activation légère avant week-end.'},
+ {date:'2026-09-27',code:'A5',note:'Récupération active ou repos selon charge d’arbitrage.'}
+];
+
+Object.assign(LIBRARY,{
+ S1:{code:'S1',pillar:'Cardio saison',title:'Entretien aérobie arbitre',duration:'35–45 min',intensity:'Modérée',summary:'Séance d’endurance facile à modérée pour conserver une base cardio pendant la saison.',purpose:'Maintenir l’endurance sans accumuler de fatigue, en restant capable de parler par phrases courtes.',knee:'Course confortable ou marche rapide selon le genou. Aucun objectif de vitesse si la douleur augmente.',rpe:'4–5/10',steps:['8–10 min très faciles','20–25 min à allure confortable et régulière','5–10 min de retour au calme','Noter RPE, genou et souffle']},
+ S2:{code:'S2',pillar:'Cardio saison',title:'Intermittent entretien arbitre',duration:'≈ 31 min',intensity:'Modérée +',domyos:true,summary:'Fractionné d’entretien plus court que A3, destiné à conserver la capacité à répéter les efforts pendant la saison.',purpose:'Entretenir rythme, relances et tolérance aux efforts répétés sans chercher un pic de forme.',knee:'Ne pas utiliser comme séance de rattrapage après un match exigeant. APEX peut la remplacer par A5/C2 selon le check-in.',rpe:'6–7/10',domyosInput:{warmup:{duration:'8:00',speed:'7,0 km/h'},high:{duration:'0:50',speed:'11,5 km/h'},low:{duration:'0:50',speed:'6,5 km/h'},intervalSelect:4,intervalActual:5,exerciseRepeatSelect:1,exerciseActual:2,rest:{duration:'2:50',speed:'7,0 km/h',incline:'0 %'},recovery:{duration:'7:30',speed:'6,0 km/h'}},domyosNote:'Entretien saison : 5 passages réels par bloc = valeur 4 dans E-Connected. 2 blocs réels = valeur 1 dans « Répétition exercice ».'},
+ B1:{code:'B1',pillar:'Barre Pilates',title:'Barre Pilates — corps entier',duration:'≈ 40–45 min',intensity:'Modérée',summary:'Séance complète où la barre et les bandes sont utilisées sur la majorité des mouvements.',purpose:'Renforcer dos, épaules, bras, tronc, fessiers et chaîne postérieure pour soutenir la saison d’arbitrage.',knee:'Le squat est optionnel et peu profond. Si le genou est sensible, le remplacer par Hip Flexion & Extension ou Glute Bridge.',rpe:'5–6/10',equipment:'Barre Pilates + bandes + tapis',visualMode:true,exercises:[
+  {name:'Good Morning',time:'2 × 10–12',image:'assets/pilates_bar/good_morning.jpg',setup:'Debout, barre sur les épaules, bandes sous les pieds.',how:'Pousser les hanches en arrière, dos neutre, puis revenir en contractant fessiers et ischios.',focus:'Chaîne postérieure, contrôle du bassin.'},
+  {name:'Seated Row',time:'2 × 12–15',image:'assets/pilates_bar/seated_row.jpg',setup:'Assis, bandes en tension, barre tenue devant soi.',how:'Tirer la barre vers le bas des côtes, épaules basses, retour lent.',focus:'Dos, posture, omoplates.'},
+  {name:'Curl Biceps',time:'2 × 12–15',image:'assets/pilates_bar/curl_biceps.jpg',setup:'Debout sur les bandes, barre devant les cuisses.',how:'Fléchir les coudes sans avancer les épaules puis redescendre lentement.',focus:'Biceps, contrôle du haut du corps.'},
+  {name:'Standing Press',time:'2 × 10–12',image:'assets/pilates_bar/standing_press.jpg',setup:'Debout stable, barre à hauteur de poitrine.',how:'Pousser la barre vers l’avant puis revenir sous contrôle.',focus:'Pectoraux, triceps, gainage.'},
+  {name:'Hip Flexion & Extension',time:'2 × 12 / côté',image:'assets/pilates_bar/hip_flex_ext.jpg',setup:'Debout avec appui si besoin, bande reliée au pied.',how:'Effectuer un mouvement contrôlé de hanche sans balancer le bassin.',focus:'Fessiers, hanche, stabilité.',knee:'Jambe d’appui souple, faible amplitude.'},
+  {name:'Glute Bridge avec barre',time:'2 × 12–15',image:'assets/pilates_bar/glute_bridge_bar.jpg',setup:'Allongé, pieds dans les sangles, barre stabilisée avec les mains.',how:'Monter le bassin, serrer les fessiers puis redescendre lentement.',focus:'Fessiers, ischios, bassin.',knee:'Genoux dans l’axe des pieds.'},
+  {name:'Reverse Fly',time:'2 × 12–15',image:'assets/pilates_bar/reverse_fly.jpg',setup:'Debout, tension modérée des bandes.',how:'Ouvrir les bras en contrôlant les omoplates puis revenir lentement.',focus:'Haut du dos, épaules postérieures.'},
+  {name:'Squat assisté avec barre',time:'2 × 8–10 optionnel',image:'assets/pilates_bar/squat_bar.jpg',setup:'Barre sur les épaules, pieds stables.',how:'Descendre seulement dans une amplitude confortable puis remonter en poussant dans les pieds.',focus:'Quadriceps, fessiers, stabilité.',knee:'Optionnel. Pas de flexion profonde. Supprimer si douleur > 3/10.'}
+ ]},
+ B2:{code:'B2',pillar:'Barre Pilates',title:'Barre Pilates — stabilité hanche/genou',duration:'≈ 28–32 min',intensity:'Modérée',summary:'Séance orientée chaîne postérieure, fessiers et stabilité, avec la barre comme support principal.',purpose:'Entretenir les muscles qui soutiennent les appuis et les changements de direction sans ajouter beaucoup d’impact.',knee:'Priorité à la qualité du mouvement. Aucune douleur croissante pendant les exercices debout.',rpe:'4–6/10',equipment:'Barre Pilates + bandes + tapis',visualMode:true,exercises:[
+  {name:'Good Morning',time:'2 × 10',image:'assets/pilates_bar/good_morning.jpg',setup:'Barre sur les épaules, bandes sous les pieds.',how:'Charnière de hanche lente, dos neutre.',focus:'Ischios, fessiers.'},
+  {name:'Hip Flexion & Extension',time:'2 × 10 / côté',image:'assets/pilates_bar/hip_flex_ext.jpg',setup:'Debout avec appui possible.',how:'Mouvement de hanche contrôlé, bassin stable.',focus:'Hanche, fessiers, stabilité.',knee:'Amplitude courte et stable.'},
+  {name:'Glute Kickbacks',time:'2 × 10–12 / côté',image:'assets/pilates_bar/glute_kickbacks_bar.jpg',setup:'À quatre pattes, bande reliée au pied.',how:'Pousser le pied vers l’arrière sans cambrer le dos.',focus:'Grand fessier.',knee:'Coussin sous le genou d’appui si nécessaire.'},
+  {name:'Glute Bridge avec barre',time:'2 × 12',image:'assets/pilates_bar/glute_bridge_bar.jpg',setup:'Allongé, pieds stables.',how:'Monter le bassin et redescendre sous contrôle.',focus:'Fessiers, ischios.',knee:'Genoux alignés.'},
+  {name:'Seated Row',time:'2 × 12',image:'assets/pilates_bar/seated_row.jpg',setup:'Assis, barre reliée aux bandes.',how:'Tirer vers les côtes, épaules basses.',focus:'Dos, posture.'},
+  {name:'Lateral Raise',time:'2 × 10–12',image:'assets/pilates_bar/lateral_raise.jpg',setup:'Debout, barre/bandes en tension légère.',how:'Élever les bras latéralement sans hausser les épaules.',focus:'Épaules, stabilité du tronc.'}
+ ]},
+ B3:{code:'B3',pillar:'Barre Pilates',title:'Barre Pilates — haut du corps + tronc',duration:'≈ 30–35 min',intensity:'Modérée',summary:'Séance sans charge importante sur les jambes, utile entre deux journées physiques.',purpose:'Entretenir dos, épaules, bras et gainage tout en laissant les membres inférieurs récupérer.',knee:'Quasiment aucune flexion de genou nécessaire.',rpe:'4–5/10',equipment:'Barre Pilates + bandes',visualMode:true,exercises:[
+  {name:'Curl Biceps',time:'2 × 12–15',image:'assets/pilates_bar/curl_biceps.jpg',setup:'Debout sur les bandes.',how:'Curl contrôlé, coudes près du corps.',focus:'Biceps.'},
+  {name:'Push Down Triceps',time:'2 × 12–15',image:'assets/pilates_bar/tricep_pushdown.jpg',setup:'Barre en tension devant le buste.',how:'Étendre les coudes vers le bas sans bouger les épaules.',focus:'Triceps.'},
+  {name:'Lateral Raise',time:'2 × 10–12',image:'assets/pilates_bar/lateral_raise.jpg',setup:'Debout stable.',how:'Élever les bras jusqu’à une hauteur confortable.',focus:'Épaules.'},
+  {name:'Wide-Grip Barbell',time:'2 × 10–12',image:'assets/pilates_bar/wide_grip_barbell.jpg',setup:'Prise large, bandes sous les pieds.',how:'Monter la barre au-dessus de la tête sans cambrer.',focus:'Épaules, haut du dos, gainage.'},
+  {name:'Seated Row',time:'2 × 12–15',image:'assets/pilates_bar/seated_row.jpg',setup:'Assis, bandes en tension.',how:'Tirer vers les côtes, retour lent.',focus:'Dos, posture.'},
+  {name:'Reverse Fly',time:'2 × 12',image:'assets/pilates_bar/reverse_fly.jpg',setup:'Debout, légère inclinaison si confortable.',how:'Ouvrir les bras sans hausser les épaules.',focus:'Arrière d’épaule, omoplates.'},
+  {name:'Cable Crossover',time:'2 × 10 / côté',image:'assets/pilates_bar/cable_crossover.jpg',setup:'Debout, bande en diagonale.',how:'Ramener le bras en diagonale en gardant le bassin stable.',focus:'Pectoraux, obliques, contrôle.'}
+ ]},
+ B4:{code:'B4',pillar:'Barre Pilates',title:'Barre Pilates — activation courte',duration:'≈ 20–22 min',intensity:'Faible à modérée',summary:'Séance courte pour entretenir le tonus ou préparer un week-end d’arbitrage sans fatigue résiduelle.',purpose:'Activer le corps entier avec peu de volume.',knee:'Aucun exercice ne doit augmenter la douleur. Pas de squat dans cette version.',rpe:'3–4/10',equipment:'Barre Pilates + bandes',visualMode:true,exercises:[
+  {name:'Seated Row',time:'2 × 10',image:'assets/pilates_bar/seated_row.jpg',setup:'Assis, bandes en tension légère.',how:'Tirer vers les côtes puis revenir lentement.',focus:'Dos, posture.'},
+  {name:'Curl Biceps',time:'2 × 10',image:'assets/pilates_bar/curl_biceps.jpg',setup:'Debout sur les bandes.',how:'Curl contrôlé.',focus:'Bras.'},
+  {name:'Lateral Raise',time:'2 × 8–10',image:'assets/pilates_bar/lateral_raise.jpg',setup:'Debout stable.',how:'Élévation latérale courte et contrôlée.',focus:'Épaules.'},
+  {name:'Hip Flexion & Extension',time:'2 × 8 / côté',image:'assets/pilates_bar/hip_flex_ext.jpg',setup:'Avec appui si besoin.',how:'Petit mouvement de hanche, bassin stable.',focus:'Hanche, fessiers.',knee:'Faible amplitude.'},
+  {name:'Glute Bridge avec barre',time:'2 × 10',image:'assets/pilates_bar/glute_bridge_bar.jpg',setup:'Allongé.',how:'Monter le bassin puis redescendre lentement.',focus:'Fessiers, chaîne postérieure.',knee:'Genoux alignés.'}
+ ]}
+});
+
+function migrateToV20(){
+ state.settings ||= {};
+ state.plan ||= [];
+ state.settings.seasonMode = state.settings.seasonMode ?? true;
+ state.settings.seasonStart ||= SEASON_START;
+ state.settings.seasonGoal ||= 'Maintien physique pour la saison rugby';
+ const existing=new Set(state.plan.map(p=>p.date));
+ SEASON_PLAN.forEach(p=>{if(!existing.has(p.date))state.plan.push({...p});});
+ state.plan.sort((a,b)=>a.date.localeCompare(b.date));
+ state.settings.apexVersion=APEX_V2_VERSION;
+ localStorage.setItem(KEY,JSON.stringify(state));
+}
+migrateToV20();
+
+function resetPlan(){
+ if(confirm('Réinitialiser le plan APEX V2.0 ? Les check-ins, séances réalisées, historiques et données cloud restent conservés.')){
+   const past=state.plan.filter(p=>p.date<SEASON_START);
+   state.plan=[...createDefaultPlan(),...SEASON_PLAN].filter((p,i,a)=>a.findIndex(x=>x.date===p.date)===i).sort((a,b)=>a.date.localeCompare(b.date));
+   persist();
+ }
+}
+
+function renderPlan(){
+ const today=localToday();
+ let lastPhase='';
+ $('planTimeline').innerHTML=state.plan.map(p=>{
+   const lib=LIBRARY[p.code]||{};
+   const phase=p.date<=TEST_DATE?'Préparation test':'Saison rugby';
+   const divider=phase!==lastPhase?`<div class="phase-divider"><span>${phase}</span>${phase==='Saison rugby'?'<small>Maintenir • récupérer • rester disponible pour arbitrer</small>':'<small>Objectif : test Yo-Yo du 29/08</small>'}</div>`:'';
+   lastPhase=phase;
+   const status=p.date<today?'past':p.date===today?'today':p.date===state.settings.testDate?'test':'';
+   return `${divider}<article class="plan-row ${status}" onclick="openSession('${esc(p.code)}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openSession('${esc(p.code)}')"><div class="datebox"><b>${fmtDate(p.date).split(' ')[1]||fmtDate(p.date)}</b><span>${fmtDate(p.date).split(' ')[0]}</span></div><div class="plan-code">${esc(p.code)}</div><div class="plan-body"><h3>${esc(lib.title||p.code)}</h3><p>${esc(p.note)}</p><small>${esc(lib.duration||'')} · ${esc(lib.intensity||'')} · Cliquer pour ouvrir</small></div>${p.date===today?'<span class="today-chip">AUJOURD’HUI</span>':'<span class="chevron">›</span>'}</article>`;
+ }).join('');
+}
+
+const v20PreviousRenderCockpit=renderCockpit;
+renderCockpit=function(){
+ v20PreviousRenderCockpit();
+ const today=localToday(),after=today>TEST_DATE;
+ if($('goalSnapshot')){
+   const adapt=state.settings.lastPlanAdaptation?.explanation||'';
+   if(after){
+     $('goalSnapshot').innerHTML=`<div class="goal-ring"><b>SAISON</b><span>maintien</span></div><div><b>Objectif saison rugby</b><p>Rester disponible, mobile et suffisamment entraîné toute la saison.</p><p class="muted">APEX alterne cardio, barre Pilates, mobilité et récupération selon tes check-ins et ta charge réelle.</p>${adapt?`<p class="adapt-note"><b>Dernière adaptation :</b> ${esc(adapt)}</p>`:''}</div>`;
+   }
+ }
+};
+
+const v20PreviousRenderProgress=renderProgress;
+renderProgress=function(){
+ v20PreviousRenderProgress();
+ const after=localToday()>TEST_DATE;
+ if(after&&$('statDays')){$('statDays').textContent=state.plan.filter(p=>p.date>=localToday()).length;if($('statDaysLabel'))$('statDaysLabel').textContent='séances planifiées à venir';}
+};
+
+const v20PreviousRefreshAll=refreshAll;
+refreshAll=function(){
+ v20PreviousRefreshAll();
+ const after=localToday()>TEST_DATE;
+ if($('testCountdown'))$('testCountdown').textContent=after?'Mode Saison':(diffDays(localToday(),TEST_DATE)===0?'Jour du test':`Test J-${Math.max(0,diffDays(localToday(),TEST_DATE))}`);
+ if(document.querySelector('.version'))document.querySelector('.version').textContent='V2.0';
+};
+
+// Le mode adaptatif sait aussi alléger les nouvelles séances saison.
+const v20PrevDecisionFor=decisionFor;
+decisionFor=function(c,planned){
+ const d=v20PrevDecisionFor(c,planned),p=planned?LIBRARY[planned.code]:null;
+ if(!planned||planned.date<=TEST_DATE)return d;
+ if(d.zone==='RED'&&p&&['S1','S2','B1','B2','B3','B4'].includes(p.code)){
+   return {...d,title:'Récupération saison',code:'A5',message:'APEX remplace la charge prévue par une récupération active afin de préserver ta disponibilité pour la saison.'};
+ }
+ if(d.zone==='ORANGE'&&p&&['S2','B1'].includes(p.code)){
+   return {...d,title:'Charge saison allégée',code:p.code==='S2'?'S1':'B4',message:'APEX réduit la charge du jour sans supprimer complètement l’entraînement.'};
+ }
+ return d;
+};
+
+state.settings.apexVersion=APEX_V2_VERSION;
+localStorage.setItem(KEY,JSON.stringify(state));
+refreshAll();
