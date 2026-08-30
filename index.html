@@ -9,7 +9,7 @@
 <body data-apex-version="V2.2.0">
 <header class="topbar">
   <div><div class="brand">APEX <span>ARBITRE</span></div><div class="subtitle">Adaptation • Préparation • État • eXécution</div></div>
-  <div class="top-right"><span id="testCountdown" class="countdown">Test J-12</span><span id="cloudTopStatus" class="cloud-top-status local">LOCAL</span><span class="version">V2.3.1</span></div>
+  <div class="top-right"><span id="testCountdown" class="countdown">Test J-12</span><span id="cloudTopStatus" class="cloud-top-status local">LOCAL</span><span class="version">V2.4.0</span></div>
 </header>
 <div class="layout">
   <aside class="sidebar">
@@ -22,7 +22,7 @@
     <button class="nav" data-view="mental">◎ Mental / TOP</button>
     <button class="nav" data-view="history">↺ Historique</button>
     <button class="nav" data-view="sync">☁ Synchronisation</button>
-    <div class="aside-note">V2.3.1 Coach adaptatif : la décision explique désormais les facteurs principaux et tient compte des séances déjà légères.</div>
+    <div class="aside-note">V2.4.0 Suivi longitudinal : charge réelle, régularité, historique hebdomadaire et progression deviennent visibles.</div>
   </aside>
 
   <main class="content">
@@ -102,9 +102,11 @@
     <section id="progress" class="view">
       <div class="section-head"><div><span class="eyebrow">TENDANCES</span><h1>Progression</h1></div></div>
       <div class="cards stats"><article><span id="statCheckins">0</span><small>check-ins</small></article><article><span id="statTraining">0</span><small>séances réalisées</small></article><article><span id="statMental">0</span><small>séances mental/TOP</small></article><article><span id="statDays">12</span><small id="statDaysLabel">jours avant test</small></article></div>
+      <div id="loadDashboard" class="load-dashboard"></div>
+      <div class="panel"><div class="panel-head"><h2>Charge des 6 dernières semaines</h2><span class="badge">sRPE estimée</span></div><div id="weeklyLoadHistory"></div><p class="muted mini">Charge APEX = RPE × durée estimée de la séance. Pour une séance arrêtée, APEX applique une charge réduite. Cette valeur sert au suivi d’entraînement, pas à une évaluation médicale.</p></div>
       <div class="dashboard-grid"><div class="panel"><h2>Sommeil</h2><div id="sleepTrend"></div></div><div class="panel"><h2>Genou</h2><div id="kneeTrend"></div></div></div>
-      <div class="panel"><div class="panel-head"><h2>Ce qu’APEX apprend de toi</h2><span class="badge">V1.6</span></div><div id="adaptiveInsights"></div></div>
-      <div class="panel"><h2>Journal d'entraînement</h2><div id="trainingLog"></div></div>
+      <div class="panel"><div class="panel-head"><h2>Ce qu’APEX apprend de toi</h2><span class="badge">V2.4</span></div><div id="adaptiveInsights"></div></div>
+      <div class="panel"><div class="panel-head"><h2>Journal d'entraînement</h2><span class="badge">charge réelle</span></div><div id="trainingLog"></div></div>
     </section>
 
     <section id="mental" class="view">
@@ -190,5 +192,6 @@
   <script src="v2.2.0-coach.js"></script>
   <script src="v2.3.0-adaptive.js"></script>
   <script src="v2.3.1-explain.js"></script>
+  <script src="v2.4.0-progress.js"></script>
 </body>
 </html>
