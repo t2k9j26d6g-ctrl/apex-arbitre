@@ -3,25 +3,26 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>APEX Arbitre V2.0.4 Saison</title>
+  <title>APEX Arbitre V2.1.0 Coach</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body data-apex-version="V2.0.4">
+<body data-apex-version="V2.1.0">
 <header class="topbar">
   <div><div class="brand">APEX <span>ARBITRE</span></div><div class="subtitle">Adaptation • Préparation • État • eXécution</div></div>
-  <div class="top-right"><span id="testCountdown" class="countdown">Test J-12</span><span id="cloudTopStatus" class="cloud-top-status local">LOCAL</span><span class="version">V2.0.4</span></div>
+  <div class="top-right"><span id="testCountdown" class="countdown">Test J-12</span><span id="cloudTopStatus" class="cloud-top-status local">LOCAL</span><span class="version">V2.1.0</span></div>
 </header>
 <div class="layout">
   <aside class="sidebar">
     <button class="nav active" data-view="cockpit">✦ Cockpit du jour</button>
     <button class="nav" data-view="checkin">♥ Check-in matin</button>
     <button class="nav" data-view="plan">▦ Plan & saison</button>
+    <button class="nav" data-view="profile">⚙ Profil & semaine</button>
     <button class="nav" data-view="library">▶ Bibliothèque séances</button>
     <button class="nav" data-view="progress">↗ Progression</button>
     <button class="nav" data-view="mental">◎ Mental / TOP</button>
     <button class="nav" data-view="history">↺ Historique</button>
     <button class="nav" data-view="sync">☁ Synchronisation</button>
-    <div class="aside-note">V2.0 Saison : préparation au test + maintien physique pour la saison rugby.</div>
+    <div class="aside-note">V2.1 Coach : profil, VMA de travail et semaine automatique avec ou sans match.</div>
   </aside>
 
   <main class="content">
@@ -61,6 +62,36 @@
     <section id="plan" class="view">
       <div class="section-head"><div><span class="eyebrow">OBJECTIF : TEST + SAISON RUGBY</span><h1>Plan APEX</h1><p>Jusqu’au 29/08, priorité au test Yo-Yo. Après le test, APEX bascule en maintien saison : cardio, barre Pilates, mobilité et récupération.</p></div><button class="ghost" onclick="resetPlan()">Réinitialiser le plan V2.0</button></div>
       <div id="planTimeline" class="timeline"></div>
+    </section>
+
+
+    <section id="profile" class="view">
+      <div class="section-head"><div><span class="eyebrow">PARAMÉTRAGE RAPIDE</span><h1>Profil & semaine</h1><p>APEX utilise ces réglages pour construire une semaine simple : charge match, fractionné, endurance, renforcement et récupération.</p></div></div>
+      <div id="profileSummary"></div>
+      <div class="panel"><div class="panel-head"><h2>Profil sportif</h2><span class="badge">V2.1</span></div>
+        <div class="checkin-grid">
+          <label>Âge<input id="pAge" type="number" min="16" max="90"></label>
+          <label>Taille (cm)<input id="pHeight" type="number" min="130" max="220"></label>
+          <label>Poids (kg)<input id="pWeight" type="number" min="40" max="180" step="0.1"></label>
+          <label>VMA de travail (km/h)<input id="pVma" type="number" min="6" max="25" step="0.1" placeholder="ex. 13,5"></label>
+          <label>Niveau arbitre<input id="pLevel" type="text" placeholder="ex. Fédérale 2 / Fédérale 3"></label>
+          <label>Objectif<input id="pGoal" type="text" placeholder="Maintien physique, Yo-Yo, saison..."></label>
+          <label>Semaine avec match<input id="pMatchSessions" type="number" min="1" max="7" value="3"></label>
+          <label>Semaine sans match<input id="pNoMatchSessions" type="number" min="1" max="7" value="4"></label>
+        </div>
+        <label class="checkline"><input id="pMatchCounts" type="checkbox" checked> Le match compte comme une charge/séance dans le volume hebdomadaire</label>
+        <div class="actions"><button class="primary" onclick="saveApexProfile()">Enregistrer le profil</button></div>
+      </div>
+      <div class="panel"><div class="panel-head"><h2>Construire ma semaine</h2><span class="badge">AUTO</span></div>
+        <div class="week-builder">
+          <label>Lundi de la semaine<input id="weekStart" type="date" onchange="renderApexWeekPreview()"></label>
+          <label class="checkline"><input id="weekHasMatch" type="checkbox" checked> Match le week-end</label>
+          <label>Jour du match<select id="weekMatchDay"><option value="5">Samedi</option><option value="6" selected>Dimanche</option></select></label>
+        </div>
+        <p class="muted mini">Avec match : fractionné + renforcement + match. Sans match : fractionné + renforcement + endurance + mobilité/récupération.</p>
+        <div class="actions"><button class="primary" onclick="generateApexWeek()">Générer cette semaine</button><button class="ghost" onclick="go('plan')">Voir le plan</button></div>
+        <div id="weekPreview" class="week-preview"></div>
+      </div>
     </section>
 
     <section id="library" class="view">
@@ -156,5 +187,6 @@
 <script src="v2.0.2-season.js"></script>
   <script src="v2.0.3-mobility-sync.js"></script>
   <script src="v2.0.4-iphone-fix.js"></script>
+  <script src="v2.1.0-coach.js"></script>
 </body>
 </html>
