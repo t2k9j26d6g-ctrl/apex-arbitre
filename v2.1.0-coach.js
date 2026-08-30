@@ -1,0 +1,160 @@
+/* APEX V2.1.0 — profil, charge hebdomadaire, match et VMA de travail */
+(function(){
+  const V='2.1.0';
+  state.settings ||= {};
+  state.settings.profile ||= {};
+  const p=state.settings.profile;
+  p.age ??= '';
+  p.height ??= '';
+  p.weight ??= '';
+  p.refereeLevel ??= 'Fédérale 2 / Fédérale 3';
+  p.goal ??= 'Maintien physique et performance arbitre';
+  p.vma ??= '';
+  p.sessionsMatchWeek ??= 3;
+  p.sessionsNoMatchWeek ??= 4;
+  p.matchCountsAsSession ??= true;
+  state.settings.apexVersion='2.1.0-coach';
+
+  function n(v){const x=Number(String(v??'').replace(',','.'));return Number.isFinite(x)?x:null}
+  function mondayOf(dateStr){const d=parseLocal(dateStr||localToday());const day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return isoDay(d)}
+  function addDays(dateStr,days){const d=parseLocal(dateStr);d.setDate(d.getDate()+days);return isoDay(d)}
+  function pctSpeed(vma,pct){const v=n(vma);return v?Math.round(v*pct*10)/10:null}
+  function fmtSpeed(v){return v==null?'À définir':String(v).replace('.',',')+' km/h'}
+
+  function refreshDynamicSessions(){
+    const v=n(p.vma);
+    const endurance=v?pctSpeed(v,.70):null;
+    const frac=v?pctSpeed(v,1.00):null;
+    const recovery=v?pctSpeed(v,.55):6;
+    LIBRARY.V1={code:'V1',pillar:'Cardio',title:'Fractionné VMA tapis',duration:'≈ 34–38 min',intensity:'Élevée',domyos:true,
+      summary:v?`Intervalles calibrés sur une VMA de travail de ${String(v).replace('.',',')} km/h.`:'Fractionné calibré sur la VMA de travail à renseigner dans le profil.',
+      purpose:'Entretenir la puissance aérobie et la capacité à répéter des efforts soutenus utiles à l’arbitrage.',
+      knee:'Séance à impact. APEX doit la protéger si le check-in est défavorable.',rpe:'7–8/10',
+      domyosInput:{warmup:{duration:'10:00',speed:fmtSpeed(v?pctSpeed(v,.60):7)},high:{duration:'1:00',speed:fmtSpeed(frac||12)},low:{duration:'1:00',speed:fmtSpeed(recovery)},intervalSelect:5,intervalActual:6,exerciseRepeatSelect:1,exerciseActual:2,rest:{duration:'2:00',speed:fmtSpeed(recovery),incline:'0 %'},recovery:{duration:'8:00',speed:fmtSpeed(recovery)}},
+      domyosNote:v?'Les vitesses sont calculées depuis ta VMA de travail. Ce réglage est un point de départ : le débrief et le check-in restent prioritaires.':'Renseigne d’abord ta VMA de travail dans Profil & semaine.'};
+    LIBRARY.E1={code:'E1',pillar:'Cardio',title:'Endurance tapis / sortie longue',duration:'45–60 min',intensity:'Faible à modérée',domyos:true,
+      summary:v?`Endurance autour de 70 % VMA, soit environ ${fmtSpeed(endurance)}.`:'Sortie longue à intensité conversationnelle, calibrable avec la VMA.',
+      purpose:'Construire et entretenir la base aérobie sans accumuler une fatigue excessive.',
+      knee:'Rester en aisance. Réduire durée ou vitesse si la gêne augmente.',rpe:'3–5/10',
+      domyosInput:{warmup:{duration:'8:00',speed:fmtSpeed(v?pctSpeed(v,.55):6.5)},high:{duration:'35:00',speed:fmtSpeed(endurance||8.5)},low:{duration:'0:00',speed:'—'},intervalSelect:0,intervalActual:1,exerciseRepeatSelect:0,exerciseActual:1,rest:{duration:'0:00',speed:'—',incline:'0 %',unused:true},recovery:{duration:'7:00',speed:fmtSpeed(v?pctSpeed(v,.55):6.5)}},
+      domyosNote:'Pour une sortie longue, privilégier l’aisance respiratoire. La vitesse issue de la VMA est indicative, pas une obligation.'};
+  }
+  refreshDynamicSessions();
+
+  window.saveApexProfile=function(){
+    p.age=n($('pAge')?.value)||'';
+    p.height=n($('pHeight')?.value)||'';
+    p.weight=n($('pWeight')?.value)||'';
+    p.refereeLevel=$('pLevel')?.value?.trim()||'';
+    p.goal=$('pGoal')?.value?.trim()||'';
+    p.vma=n($('pVma')?.value)||'';
+    p.sessionsMatchWeek=n($('pMatchSessions')?.value)||3;
+    p.sessionsNoMatchWeek=n($('pNoMatchSessions')?.value)||4;
+    p.matchCountsAsSession=$('pMatchCounts')?.checked!==false;
+    refreshDynamicSessions();
+    persist();
+    renderApexProfile();
+    alert('Profil APEX enregistré.');
+  };
+
+  window.renderApexProfile=function(){
+    const host=$('profileSummary'); if(!host)return;
+    const v=n(p.vma);
+    host.innerHTML=`<div class="profile-kpis">
+      <article><small>VMA de travail</small><b>${v?String(v).replace('.',',')+' km/h':'À définir'}</b></article>
+      <article><small>Semaine avec match</small><b>${p.sessionsMatchWeek} charge(s)</b></article>
+      <article><small>Semaine sans match</small><b>${p.sessionsNoMatchWeek} séance(s)</b></article>
+      <article><small>Endurance cible</small><b>${v?fmtSpeed(pctSpeed(v,.70)):'À définir'}</b></article>
+    </div>`;
+    const fields={pAge:p.age,pHeight:p.height,pWeight:p.weight,pLevel:p.refereeLevel,pGoal:p.goal,pVma:p.vma,pMatchSessions:p.sessionsMatchWeek,pNoMatchSessions:p.sessionsNoMatchWeek};
+    Object.entries(fields).forEach(([id,val])=>{const el=$(id);if(el&&document.activeElement!==el)el.value=val??''});
+    const mc=$('pMatchCounts');if(mc)mc.checked=p.matchCountsAsSession!==false;
+  };
+
+  window.generateApexWeek=function(){
+    const start=mondayOf($('weekStart')?.value||localToday());
+    const hasMatch=$('weekHasMatch')?.checked!==false;
+    const matchDay=+$('weekMatchDay')?.value||6; // 5=samedi, 6=dimanche
+    const rows=[];
+    if(hasMatch){
+      rows.push({date:addDays(start,1),code:'V1',note:'Fractionné VMA tapis — séance qualitative de la semaine.'});
+      rows.push({date:addDays(start,3),code:'B1',note:'Renforcement protecteur — chaîne postérieure, gainage, stabilité.'});
+      rows.push({date:addDays(start,matchDay),code:'MATCH',note:'Match / arbitrage — compté comme charge physique de la semaine.'});
+      if(!p.matchCountsAsSessionAsSession && p.sessionsMatchWeek>3) rows.push({date:addDays(start,4),code:'C2',note:'Mobilité / récupération pré-match.'});
+    }else{
+      rows.push({date:addDays(start,1),code:'V1',note:'Fractionné VMA tapis — qualité cardio.'});
+      rows.push({date:addDays(start,3),code:'B1',note:'Renforcement protecteur.'});
+      rows.push({date:addDays(start,5),code:'E1',note:'Endurance tapis / sortie longue.'});
+      rows.push({date:addDays(start,6),code:'C2',note:'Mobilité / récupération active.'});
+    }
+    // Le profil fixe le volume cible. On tronque uniquement les séances optionnelles de fin.
+    const target=hasMatch?(+p.sessionsMatchWeek||3):(+p.sessionsNoMatchWeek||4);
+    const finalRows=rows.slice(0,Math.max(1,target));
+    const begin=start,end=addDays(start,6);
+    state.plan=(state.plan||[]).filter(x=>x.date<begin||x.date>end);
+    finalRows.forEach(x=>state.plan.push(x));
+    state.plan.sort((a,b)=>a.date.localeCompare(b.date));
+    state.settings.weekPlanner={start,hasMatch,matchDay,target,generatedAt:new Date().toISOString()};
+    persist();
+    renderApexWeekPreview();
+    alert(`Semaine APEX générée : ${finalRows.length} charge(s) planifiée(s).`);
+  };
+
+  window.renderApexWeekPreview=function(){
+    const host=$('weekPreview');if(!host)return;
+    const start=mondayOf($('weekStart')?.value||state.settings.weekPlanner?.start||localToday());
+    const end=addDays(start,6);
+    const rows=(state.plan||[]).filter(x=>x.date>=start&&x.date<=end);
+    host.innerHTML=rows.length?rows.map(x=>`<article><span>${fmtDate(x.date)}</span><b>${esc(x.code==='MATCH'?'MATCH / ARBITRAGE':(LIBRARY[x.code]?.title||x.code))}</b><small>${esc(x.note||'')}</small></article>`).join(''):'<div class="empty">Aucune semaine générée pour cette période.</div>';
+  };
+
+  // MATCH est une charge de calendrier, pas une fiche d'entraînement classique.
+  const oldRenderPlan=renderPlan;
+  renderPlan=function(){
+    const today=localToday();
+    $('planTimeline').innerHTML=(state.plan||[]).map(pn=>{
+      if(pn.code==='MATCH'){
+        const status=pn.date<today?'past':pn.date===today?'today':'';
+        return `<article class="plan-row ${status}"><div class="datebox"><b>${fmtDate(pn.date).split(' ')[1]||fmtDate(pn.date)}</b><span>${fmtDate(pn.date).split(' ')[0]}</span></div><div class="plan-code">M</div><div class="plan-body"><h3>Match / arbitrage</h3><p>${esc(pn.note||'Charge match')}</p><small>Charge physique week-end prise en compte par APEX</small></div>${pn.date===today?'<span class="today-chip">AUJOURD’HUI</span>':''}</article>`;
+      }
+      const lib=LIBRARY[pn.code]||{};const status=pn.date<today?'past':pn.date===today?'today':pn.date===state.settings.testDate?'test':'';
+      return `<article class="plan-row ${status}" onclick="openSession('${esc(pn.code)}')" role="button" tabindex="0"><div class="datebox"><b>${fmtDate(pn.date).split(' ')[1]||fmtDate(pn.date)}</b><span>${fmtDate(pn.date).split(' ')[0]}</span></div><div class="plan-code">${esc(pn.code)}</div><div class="plan-body"><h3>${esc(lib.title||pn.code)}</h3><p>${esc(pn.note||'')}</p><small>${esc(lib.duration||'')} · ${esc(lib.intensity||'')} · Cliquer pour ouvrir</small></div>${pn.date===today?'<span class="today-chip">AUJOURD’HUI</span>':'<span class="chevron">›</span>'}</article>`;
+    }).join('');
+  };
+
+  // Synchronise aussi les nouveaux réglages du profil, sans changer les tables existantes.
+  if(typeof pushLocalToCloudV19==='function'){
+    const origPush=pushLocalToCloudV19;
+    pushLocalToCloudV19=async function(opts){
+      // Le moteur V1.9 envoie d'abord les données standard.
+      const ok=await origPush(opts); if(!ok||!apexCloud||!apexCloudUser)return ok;
+      try{
+        const {data:existing}=await apexCloud.from('settings').select('settings_data').eq('user_id',apexCloudUser.id).maybeSingle();
+        const settings_data={...(existing?.settings_data||{}),profile_v210:state.settings.profile||{},weekPlanner_v210:state.settings.weekPlanner||null};
+        await apexCloud.from('settings').upsert({user_id:apexCloudUser.id,settings_data},{onConflict:'user_id'});
+      }catch(e){console.warn('APEX V2.1 profile sync',e)}
+      return ok;
+    };
+  }
+  if(typeof applyCloudPackageV19==='function'){
+    const origApply=applyCloudPackageV19;
+    applyCloudPackageV19=function(pack,opts){
+      const cp=pack?.settings?.settings_data?.profile_v210;
+      const cw=pack?.settings?.settings_data?.weekPlanner_v210;
+      origApply(pack,opts);
+      if(cp){state.settings.profile={...(state.settings.profile||{}),...cp};Object.assign(p,state.settings.profile);refreshDynamicSessions()}
+      if(cw)state.settings.weekPlanner=cw;
+      localStorage.setItem(KEY,JSON.stringify(state));
+      renderApexProfile();
+    };
+  }
+
+  const oldRefresh=refreshAll;
+  refreshAll=function(){oldRefresh();refreshDynamicSessions();renderApexProfile();renderApexWeekPreview()};
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    const ws=$('weekStart');if(ws&&!ws.value)ws.value=mondayOf(localToday());
+    renderApexProfile();renderApexWeekPreview();
+  });
+  setTimeout(()=>{const ws=$('weekStart');if(ws&&!ws.value)ws.value=mondayOf(localToday());renderApexProfile();renderApexWeekPreview();try{renderLibrary();renderPlan()}catch(e){}},0);
+})();
