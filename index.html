@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>APEX Arbitre V2.1.1 Coach</title>
+  <title>APEX Arbitre V2.2.0 Coach</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body data-apex-version="V2.1.1">
+<body data-apex-version="V2.2.0">
 <header class="topbar">
   <div><div class="brand">APEX <span>ARBITRE</span></div><div class="subtitle">Adaptation • Préparation • État • eXécution</div></div>
-  <div class="top-right"><span id="testCountdown" class="countdown">Test J-12</span><span id="cloudTopStatus" class="cloud-top-status local">LOCAL</span><span class="version">V2.1.1</span></div>
+  <div class="top-right"><span id="testCountdown" class="countdown">Test J-12</span><span id="cloudTopStatus" class="cloud-top-status local">LOCAL</span><span class="version">V2.2.0</span></div>
 </header>
 <div class="layout">
   <aside class="sidebar">
@@ -68,16 +68,16 @@
     <section id="profile" class="view">
       <div class="section-head"><div><span class="eyebrow">PARAMÉTRAGE RAPIDE</span><h1>Profil & semaine</h1><p>APEX utilise ces réglages pour construire une semaine simple : charge match, fractionné, endurance, renforcement et récupération.</p></div></div>
       <div id="profileSummary"></div>
-      <div class="panel"><div class="panel-head"><h2>Profil sportif</h2><span class="badge">V2.1</span></div>
+      <div class="panel"><div class="panel-head"><h2>Profil sportif</h2><span class="badge">V2.2</span></div>
         <div class="checkin-grid">
           <label>Âge<input id="pAge" type="number" min="16" max="90"></label>
           <label>Taille (cm)<input id="pHeight" type="number" min="130" max="220"></label>
           <label>Poids (kg)<input id="pWeight" type="number" min="40" max="180" step="0.1"></label>
           <label>VMA de travail (km/h)<input id="pVma" type="number" min="6" max="25" step="0.1" placeholder="ex. 13,5"></label>
           <label>Niveau arbitre<select id="pLevel" aria-label="Niveau arbitre"></select><small id="pLevelSeason" class="field-hint"></small></label>
-          <label>Objectif<input id="pGoal" type="text" placeholder="Maintien physique, Yo-Yo, saison..."></label>
-          <label>Semaine avec match<input id="pMatchSessions" type="number" min="1" max="7" value="3"></label>
-          <label>Semaine sans match<input id="pNoMatchSessions" type="number" min="1" max="7" value="4"></label>
+          <label class="profile-goal">Objectif<input id="pGoal" type="text" placeholder="Maintien physique, performance arbitre, préparation test..."></label>
+          <label>Nb de séances / semaine avec match<input id="pMatchSessions" type="number" min="1" max="7" value="3"></label>
+          <label>Nb de séances / semaine sans match<input id="pNoMatchSessions" type="number" min="1" max="7" value="4"></label>
         </div>
         <label class="checkline"><input id="pMatchCounts" type="checkbox" checked> Le match compte comme une charge/séance dans le volume hebdomadaire</label>
         <div class="actions"><button class="primary" onclick="saveApexProfile()">Enregistrer le profil</button></div>
@@ -88,7 +88,7 @@
           <label class="checkline"><input id="weekHasMatch" type="checkbox" checked> Match le week-end</label>
           <label>Jour du match<select id="weekMatchDay"><option value="5">Samedi</option><option value="6" selected>Dimanche</option></select></label>
         </div>
-        <p class="muted mini">Avec match : fractionné + renforcement + match. Sans match : fractionné + renforcement + endurance + mobilité/récupération.</p>
+        <p class="muted mini">APEX construit automatiquement la semaine selon le volume choisi. Avec match, il adapte le nombre de séances selon que le match est compté ou non dans le volume hebdomadaire.</p>
         <div class="actions"><button class="primary" onclick="generateApexWeek()">Générer cette semaine</button><button class="ghost" onclick="go('plan')">Voir le plan</button></div>
         <div id="weekPreview" class="week-preview"></div>
       </div>
@@ -187,6 +187,6 @@
 <script src="v2.0.2-season.js"></script>
   <script src="v2.0.3-mobility-sync.js"></script>
   <script src="v2.0.4-iphone-fix.js"></script>
-  <script src="v2.1.1-coach.js"></script>
+  <script src="v2.2.0-coach.js"></script>
 </body>
 </html>
