@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>APEX Arbitre V2.1.0 Coach</title>
+  <title>APEX Arbitre V2.1.1 Coach</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body data-apex-version="V2.1.0">
+<body data-apex-version="V2.1.1">
 <header class="topbar">
   <div><div class="brand">APEX <span>ARBITRE</span></div><div class="subtitle">Adaptation • Préparation • État • eXécution</div></div>
-  <div class="top-right"><span id="testCountdown" class="countdown">Test J-12</span><span id="cloudTopStatus" class="cloud-top-status local">LOCAL</span><span class="version">V2.1.0</span></div>
+  <div class="top-right"><span id="testCountdown" class="countdown">Test J-12</span><span id="cloudTopStatus" class="cloud-top-status local">LOCAL</span><span class="version">V2.1.1</span></div>
 </header>
 <div class="layout">
   <aside class="sidebar">
@@ -74,7 +74,7 @@
           <label>Taille (cm)<input id="pHeight" type="number" min="130" max="220"></label>
           <label>Poids (kg)<input id="pWeight" type="number" min="40" max="180" step="0.1"></label>
           <label>VMA de travail (km/h)<input id="pVma" type="number" min="6" max="25" step="0.1" placeholder="ex. 13,5"></label>
-          <label>Niveau arbitre<input id="pLevel" type="text" placeholder="ex. Fédérale 2 / Fédérale 3"></label>
+          <label>Niveau arbitre<select id="pLevel" aria-label="Niveau arbitre"></select><small id="pLevelSeason" class="field-hint"></small></label>
           <label>Objectif<input id="pGoal" type="text" placeholder="Maintien physique, Yo-Yo, saison..."></label>
           <label>Semaine avec match<input id="pMatchSessions" type="number" min="1" max="7" value="3"></label>
           <label>Semaine sans match<input id="pNoMatchSessions" type="number" min="1" max="7" value="4"></label>
@@ -187,6 +187,6 @@
 <script src="v2.0.2-season.js"></script>
   <script src="v2.0.3-mobility-sync.js"></script>
   <script src="v2.0.4-iphone-fix.js"></script>
-  <script src="v2.1.0-coach.js"></script>
+  <script src="v2.1.1-coach.js"></script>
 </body>
 </html>
